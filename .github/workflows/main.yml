@@ -31,11 +31,10 @@ jobs:
       with:
         azcliversion: 2.21.0
         inlineScript: |
-          set -eu
           az servicebus namespace create --name ATT${GITHUB_SHA:0:7} --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard
-          asb-connection-string=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name ATT${GITHUB_SHA:0:7} --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
-          echo "::add-mask::$asb-connection-string"
-          echo "::set-output name=azureservicebus-connection-string::$asb-connection-string"
+          asbconnectionstring=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name ATT${GITHUB_SHA:0:7} --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
+          echo "::add-mask::$asbconnectionstring"
+          echo "::set-output name=azureservicebus-connection-string::$asbconnectionstring"
           
     - name: Build
       run: dotnet build --configuration Release
