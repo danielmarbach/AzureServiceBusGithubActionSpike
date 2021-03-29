@@ -21,7 +21,16 @@ namespace Receive
         private static async Task Main(string[] args)
         {
             var client = new ServiceBusAdministrationClient(connectionString);
-            if (!await client.QueueExistsAsync(destination)) await client.CreateQueueAsync(destination);
+            if (!await client.QueueExistsAsync($"{destination}")){
+                     await client.CreateQueueAsync($"{destination}");
+            }
+            
+            for (int i = 0; i < 100; i++)
+            {
+                if (!await client.QueueExistsAsync($"{destination}{i}")){
+                     await client.CreateQueueAsync($"{destination}{i}");
+                }
+            }
 
             await using var serviceBusClient = new ServiceBusClient(connectionString, new ServiceBusClientOptions
             {
