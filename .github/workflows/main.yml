@@ -32,15 +32,13 @@ jobs:
         azcliversion: 2.21.0
         inlineScript: |
           az servicebus namespace create --name ATT${GITHUB_SHA:0:7} --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard
-          echo "::add-mask::AZURESERVICEBUS_CONNECTIONSTRING=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name ATT${GITHUB_SHA:0:7} --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)"
+          echo "AZURESERVICEBUS_TOKEN=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name ATT${GITHUB_SHA:0:7} --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)" >> $GITHUB_ENV
           
     - name: Build
       run: dotnet build --configuration Release
 
     - name: Run
       run: dotnet run --configuration Release --no-build --no-restore
-      env:
-        AZURESERVICEBUS_CONNECTIONSTRING: ${{ steps.setup-asb-namespace.outputs.AZURESERVICEBUS_CONNECTIONSTRING }}
 
     - name: Teardown Azure Service Bus namespace for testing
       uses: azure/CLI@v1
