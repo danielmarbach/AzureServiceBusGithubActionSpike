@@ -1,0 +1,30 @@
+name: CI
+
+on: [push]
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Setup Azure Service Bus namespace for testing
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.21.0
+        inlineScript: |
+          az servicebus namespace create --name $GITHUB_SHA --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard |
+          echo "AZURE_SERVICEBUS_CONNECTIONSTRING=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name $GITHUB_SHA --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)" >> $GITHUB_ENV
+          
+    - name: Teardown Azure Service Bus namespace for testing
+      uses: azure/CLI@v1
+      if: ${{ always() }}
+      with:
+        azcliversion: 2.21.0
+        inlineScript: |
+          az servicebus namespace delete --name $GITHUB_SHA --resource-group AzureServiceBusGithubActionsTest
