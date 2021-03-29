@@ -31,9 +31,9 @@ jobs:
       with:
         azcliversion: 2.21.0
         inlineScript: |
-          asbnamespace=ATT${GITHUB_SHA:0:7^^}
+          asbnamespace=ATT${GITHUB_SHA:0:7}
           echo "::set-output name=azureservicebus-namespace::$asbnamespace"
-          asbresourcescreated=$(az servicebus namespace create --name $ --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard)
+          asbresourcescreated=$(az servicebus namespace create --name $ --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA Actor=$GITHUB_ACTOR Repository=$GITHUB_REPOSITORY --sku Standard)
           echo "::add-mask::$asbresourcescreated"
           asbconnectionstring=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name $asbnamespace --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
           echo "::add-mask::$asbconnectionstring"
