@@ -30,8 +30,8 @@ jobs:
       with:
         azcliversion: 2.21.0
         inlineScript: |
-          az servicebus namespace create --name ATTTest --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard
-          echo "AZURESERVICEBUS_CONNECTIONSTRING=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name ATTTest --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)" >> $GITHUB_ENV
+          az servicebus namespace create --name ATT${GITHUB_SHA:0:7} --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard
+          echo "AZURESERVICEBUS_CONNECTIONSTRING=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name ATT${GITHUB_SHA:0:7} --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)" >> $GITHUB_ENV
           
     - name: Build
       run: dotnet build --configuration Release
@@ -45,4 +45,4 @@ jobs:
       with:
         azcliversion: 2.21.0
         inlineScript: |
-          az servicebus namespace delete --name ATTTest --resource-group AzureServiceBusGithubActionsTest
+          az servicebus namespace delete --name ATT${GITHUB_SHA:0:7} --resource-group AzureServiceBusGithubActionsTest
