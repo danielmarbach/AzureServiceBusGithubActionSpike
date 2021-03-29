@@ -11,7 +11,7 @@ namespace Receive
     internal class Program
     {
         private static readonly string connectionString =
-            Environment.GetEnvironmentVariable("AZURESERVICEBUS_TOKEN");
+            Environment.GetEnvironmentVariable("AZURESERVICEBUS_CONNECTIONSTRING");
 
         private static readonly string destination = "queue";
 
