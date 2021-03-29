@@ -31,8 +31,11 @@ jobs:
       with:
         azcliversion: 2.21.0
         inlineScript: |
-          az servicebus namespace create --name ATT${GITHUB_SHA:0:7} --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard
-          asbconnectionstring=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name ATT${GITHUB_SHA:0:7} --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
+          asbnamespace=ATT${GITHUB_SHA:0:7^^}
+          echo "::set-output name=azureservicebus-namespace::$asbnamespace"
+          asbresourcescreated=$(az servicebus namespace create --name $ --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard)
+          echo "::add-mask::$asbresourcescreated"
+          asbconnectionstring=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name $asbnamespace --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
           echo "::add-mask::$asbconnectionstring"
           echo "::set-output name=azureservicebus-connection-string::$asbconnectionstring"
           
@@ -50,4 +53,4 @@ jobs:
       with:
         azcliversion: 2.21.0
         inlineScript: |
-          az servicebus namespace delete --name ATT${GITHUB_SHA:0:7} --resource-group AzureServiceBusGithubActionsTest
+          az servicebus namespace delete --name ${{ steps.setup-asb-namespace.outputs.azureservicebus-namespace }} --resource-group AzureServiceBusGithubActionsTest
