@@ -30,7 +30,7 @@ jobs:
       with:
         azcliversion: 2.21.0
         inlineScript: |
-          az servicebus namespace create --name $GITHUB_SHA --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard > /dev/null 2>&1
+          az servicebus namespace create --name $GITHUB_SHA --resource-group AzureServiceBusGithubActionsTest --location westeurope --tags CommitSHA=$GITHUB_SHA --sku Standard > /dev/null
           echo "AZURESERVICEBUS_CONNECTIONSTRING=$(az servicebus namespace authorization-rule keys list --resource-group AzureServiceBusGithubActionsTest --namespace-name $GITHUB_SHA --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)" >> $GITHUB_ENV
           
     - name: Build
