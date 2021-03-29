@@ -26,6 +26,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
     - name: Setup Azure Service Bus namespace for testing
+      id: setup-asb-namespace
       uses: azure/CLI@v1
       with:
         azcliversion: 2.21.0
@@ -38,6 +39,8 @@ jobs:
 
     - name: Run
       run: dotnet run --configuration Release --no-build --no-restore
+      env:
+        AZURESERVICEBUS_CONNECTIONSTRING: ${{ steps.setup-asb-namespace.AZURESERVICEBUS_CONNECTIONSTRING }}
 
     - name: Teardown Azure Service Bus namespace for testing
       uses: azure/CLI@v1
