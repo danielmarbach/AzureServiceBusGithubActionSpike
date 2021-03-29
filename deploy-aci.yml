@@ -1,0 +1,39 @@
+apiVersion: 2019-12-01
+location: westeurope
+name: myContainerGroup
+properties:
+  containers:
+  - name: rabbitmq
+    properties:
+      image: rabbitmq:3-management
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 5672
+      - port: 15672
+  - name: sql2019
+    properties:
+      image: mcr.microsoft.com/mssql/server:2019-latest
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 1433     
+    environmentVariables:
+      - name: string
+        value: string
+        secureValue: string      
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: 5672
+    - protocol: tcp
+      port: 15672
+    - protocol: tcp
+      port: 1433
+type: Microsoft.ContainerInstance/containerGroups
